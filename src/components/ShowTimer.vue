@@ -42,7 +42,7 @@ export default defineComponent({
 
             this.stopwatchActive = false;
             
-            this.$emit('timerFinalized', this.timeInSeconds)
+            this.$emit('timerFinalized', (this.timeInSeconds))
             
             this.timeInSeconds = 0;
         }

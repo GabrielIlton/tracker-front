@@ -1,28 +1,30 @@
 <template>
-  <div class="box has-text-weight-bold">
+  <BoxText>
     <div class="columns">
       <div class="column is-7">
-        {{ 'description' }}
+        {{ task?.description || 'Tarefa sem descrição' }}
       </div>
       <div class="column">
-        <StopWatch :time-in-seconds="10"/>
+        <StopWatch :time-in-seconds="task?.timeInSeconds"/>
       </div>
     </div>
-  </div>
+  </BoxText>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { PropType, defineComponent } from 'vue';
 import StopWatch from './StopWatch.vue';
+import ITask from '@/interfaces/ITask';
+import BoxText from './BoxText.vue';
 
 export default defineComponent({
     name: 'ShowTask',
-    components: { StopWatch }
+    props: {
+      task: {
+        type: Object as PropType<ITask>,
+        require: true
+      }
+    },
+    components: { StopWatch, BoxText }
 });
 </script>
-
-<style scoped>
-.box{
-  background: #FAF0CA;
-}
-</style>
