@@ -4,7 +4,7 @@ export enum NotificationTypes {
   WARNING
 }
 
-export default interface IProject {
+export default interface INotification {
   title: string,
   text: string,
   type: NotificationTypes,

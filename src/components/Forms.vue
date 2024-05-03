@@ -26,8 +26,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent } from 'vue';
-
+import { computed, defineComponent, ref } from 'vue';
 
 import { NotificationTypes } from '@/interfaces/INotification';
 import useNotifier from '@/hooks/notifier';
@@ -38,46 +37,37 @@ import { useStore } from '@/store';
 /* eslint-disable */
 export default defineComponent({
     name: 'Forms',
-    data() {
-      return {
-        description: '',
-        projectId: ''
-      }
-    },
-    methods: {
-      finishTask(elapsedTime: number): void {
-        if (!this.projectId) {
+    setup (props, { emit }) {
+      const store = useStore()
+      const { notify } = useNotifier()
+
+      const projects = computed(() => store.state.project.projects)
+
+      const description = ref('')
+      const projectId = ref('')
+
+      const finishTask = (elapsedTime: number): void => {
+        if (!projectId.value) {
           const text = "Selecione um projeto antes de finalizar a tarefa!"
           const type = NotificationTypes.FAILED
           const title = 'Ops!'
           
-          this.notify(type, title, text);
+          notify(type, title, text);
           
           return;
         }
 
         const task: ITask = {
           timeInSeconds: elapsedTime,
-          description: this.description,
-          project: this.projects.find(project => project.id === this.projectId) || null
+          description: description.value,
+          project: projects.value.find(project => project.id === projectId.value) || null
         }
 
-        this.$emit('saveTask', task)
-        this.description = ''
+        emit('saveTask', task)
+        description.value = ''
       }
-    },
-    setup () {
-      const store = useStore()
 
-      const projects = store.state.projects
-
-      const { notify } = useNotifier()
-
-      return {
-        projects: computed(() => projects),
-        notify,
-        store
-      }
+      return { projects, projectId, description, finishTask }
     },
     emits: ['saveTask'],
     components: { ShowTimer },

@@ -26,26 +26,22 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { computed, defineComponent, ref } from 'vue';
 
 export default defineComponent({
   name: 'SideBar',
   emits: ['toChangeTheme'],
-  data() {
-    return {
-      darkModeActive: false
+  setup(props, { emit }) {
+    const darkModeActive = ref(false)
+
+    const changeTheme = (): void =>  {
+      darkModeActive.value = !darkModeActive.value;
+      emit('toChangeTheme', darkModeActive.value);
     }
-  },
-  computed: {
-    buttonText(): string {
-      return this.darkModeActive ? 'Destivar modo escuro' : 'Ativar modo escuro'
-    }
-  },
-  methods: {
-    changeTheme(): void {
-      this.darkModeActive = !this.darkModeActive;
-      this.$emit('toChangeTheme', this.darkModeActive);
-    }
+
+    const buttonText = computed(() => darkModeActive.value ? 'Destivar modo escuro' : 'Ativar modo escuro')
+
+    return { changeTheme, buttonText }
   }
 });
 </script>
@@ -58,21 +54,26 @@ header {
   height: 100vh;
   text-align: center;
 }
+
 @media only screen and (max-width: 768px) {
   header {
     padding: 2.5rem;
     height: auto;
   }
 }
+
 .panel li {
   margin: 8px 0;
 }
+
 .link {
   color: #fff;
 }
+
 .link:hover {
   color: #faf0ca;
 }
+
 .link.router-link-active {
   color: #faf0ca;
 }

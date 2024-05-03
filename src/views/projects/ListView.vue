@@ -26,7 +26,7 @@
             </router-link>
             <button class="button ml-2 is-danger" @click="deleteProject(project.id)">
               <span class="icon is-small">
-              <i class="fas fa-trash"></i>
+                <i class="fas fa-trash"></i>
               </span>
             </button>
           </td>
@@ -38,23 +38,35 @@
 
 <script lang="ts">
 import { computed, defineComponent } from 'vue';
-import { DELETE_PROJECT } from '@/store/mutation-types';
+
+import { GET_PROJECTS, REMOVE_PROJECT } from '@/store/action-types';
+import { NotificationTypes } from '@/interfaces/INotification';
+import useNotifier from '../../hooks/notifier';
 import { useStore } from '@/store';
+
 
 export default defineComponent({
   name: 'ListView',
-  setup () {
+  setup() {
     const store = useStore()
 
-    return {
-      projects: computed(() => store.state.projects),
-      store
+    const { notify } = useNotifier()
+
+    store.dispatch(GET_PROJECTS)
+
+    const deleteProject = (projectId: string) => {
+      store.dispatch(REMOVE_PROJECT, projectId).then(() => {
+        const text = 'Seu projeto já está removido.';
+        const title = 'Projeto deletado';
+        const type = NotificationTypes.SUCCESS;
+
+        notify(type, title, text)
+      })
     }
-  },
-  methods: {
-    deleteProject(projectId: string) {
-      this.store.commit(DELETE_PROJECT, projectId)
-    }
+
+    const projects = computed(() => store.state.project.projects)
+
+    return { projects, deleteProject }
   }
 });
 </script>

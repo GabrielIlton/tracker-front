@@ -1,7 +1,7 @@
 <template>
   <div class="is-flex is-align-items-center is-justify-content-space-between">
-    <StopWatch :time-in-seconds="timeInSeconds"/>
-    
+    <StopWatch :time-in-seconds="timeInSeconds" />
+
     <button class="button" @click="start" :disabled="stopwatchActive">
       <span class="icon">
         <i class="fas fa-play"></i>
@@ -18,36 +18,36 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import StopWatch from './StopWatch.vue';
 
 /* eslint-disable */
 export default defineComponent({
-    name: 'ShowTimer',
-    data() {
-        return {
-            timeInSeconds: 0,
-            stopwatch: 0,
-            stopwatchActive: false
-        };
-    },
-    methods: {
-        start() {
-            this.stopwatchActive = true
-            
-            this.stopwatch = setInterval(() => this.timeInSeconds += 1, 1000);
-        },
-        finish() {
-            clearInterval(this.stopwatch);
+  name: 'ShowTimer',
+  emits: ['timerFinalized'],
+  setup(props, { emit }) {
+    const stopwatchActive = ref(false)
+    const timeInSeconds = ref(0)
+    const stopwatch = ref(0)
 
-            this.stopwatchActive = false;
-            
-            this.$emit('timerFinalized', (this.timeInSeconds))
-            
-            this.timeInSeconds = 0;
-        }
-    },
-    emits: ['timerFinalized'],
-    components: { StopWatch }
+    const start = () => {
+      stopwatchActive.value = true
+
+      stopwatch.value = setInterval(() => timeInSeconds.value += 1, 1000);
+    }
+
+    const finish = () => {
+      clearInterval(stopwatch.value);
+
+      stopwatchActive.value = false;
+
+      emit('timerFinalized', (timeInSeconds.value))
+
+      timeInSeconds.value = 0;
+    }
+
+    return { timeInSeconds, stopwatchActive, start, finish };
+  },
+  components: { StopWatch }
 });
 </script>

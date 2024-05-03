@@ -1,6 +1,6 @@
 <template>
   <BoxText>
-    <div class="columns">
+    <div class="columns clickable" @click="taskClicked">
       <div class="column is-4">
         {{ task?.description || 'Tarefa sem descrição' }}
       </div>
@@ -8,7 +8,7 @@
         {{ task?.project?.name || 'N/D' }}
       </div>
       <div class="column">
-        <StopWatch :time-in-seconds="task?.timeInSeconds"/>
+        <StopWatch :time-in-seconds="task?.timeInSeconds" />
       </div>
     </div>
   </BoxText>
@@ -21,13 +21,25 @@ import ITask from '@/interfaces/ITask';
 import BoxText from './BoxText.vue';
 
 export default defineComponent({
-    name: 'ShowTask',
-    props: {
-      task: {
-        type: Object as PropType<ITask>,
-        require: true
-      }
-    },
-    components: { StopWatch, BoxText }
+  name: 'ShowTask',
+  emits: ['toTaskClicked'],
+  props: {
+    task: {
+      type: Object as PropType<ITask>,
+      require: true
+    }
+  },
+  setup(props, { emit }) {
+    const taskClicked = (): void => emit('toTaskClicked', props.task)
+
+    return { taskClicked }
+  },
+  components: { StopWatch, BoxText }
 });
 </script>
+
+<style scoped>
+.clickable {
+  cursor: pointer;
+}
+</style>

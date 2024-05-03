@@ -18,9 +18,9 @@ export default defineComponent({
     }
   },
   computed: {
-      elapsedTime(): string {
-          return new Date(this.timeInSeconds * 1000).toISOString().substr(11, 8);
-      }
+    elapsedTime(): string {
+      return new Date(this.timeInSeconds * 1000).toISOString().substr(11, 8);
+    }
   }
 });
 </script>

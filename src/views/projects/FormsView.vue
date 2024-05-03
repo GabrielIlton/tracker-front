@@ -17,48 +17,49 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { ADD_PROJECT, UPDATE_PROJECT } from '@/store/mutation-types';
+import { defineComponent, ref } from 'vue';
+
 import { NotificationTypes } from '../../interfaces/INotification';
+import { INSERT_PROJECT, UPDATE_PROJECT } from '@/store/action-types';
 import useNotifier from '../../hooks/notifier';
 import { useStore } from '../../store';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'FormsView',
   props: {
     id: { type: String }
   },
-  mounted() {
-    if (this.id) {
-      const project = this.store.state.projects.find(project => project.id === this.id)
-      this.projectName = project?.name || ''
-    }
-  },
-  data() {
-    return { projectName: '' }
-  },
-  methods: {
-    save() {
-      if (this.id) this.store.commit(UPDATE_PROJECT, { id: this.id, name: this.projectName })
-      else this.store.commit(ADD_PROJECT, this.projectName)
-
-      const text = 'Seu projeto já está disponível.';
-      const title = 'Novo projeto foi salvo';
-      const type = NotificationTypes.SUCCESS;
-      
-      this.notify(type, title, text)
-
-      this.projectName = ''
-      this.$router.push('/projetos')
-    }
-  },
-  setup () {
+  setup(props) {
+    const { notify } = useNotifier()
+    const router = useRouter()
     const store = useStore()
 
-    const { notify } = useNotifier()
+    const projectName = ref('')
 
-    return { store, notify }
-  },
-  components: { }
+    if (props.id) {
+      const project = store.state.project.projects.find(project => Number(project.id) === Number(props.id))
+      projectName.value = project?.name || ''
+    }
+
+    const save = () => {
+      const successMessage = () => {
+        const text = 'Seu projeto já está disponível.';
+        const title = 'Novo projeto foi salvo';
+        const type = NotificationTypes.SUCCESS;
+
+        notify(type, title, text)
+
+        projectName.value = ''
+
+        router.push('/projetos')
+      }
+
+      if (props.id) store.dispatch(UPDATE_PROJECT, { id: props.id, name: projectName.value }).then(() => successMessage())
+      else store.dispatch(INSERT_PROJECT, projectName.value).then(() => successMessage())
+    }
+
+    return { projectName, save }
+  }
 });
 </script>

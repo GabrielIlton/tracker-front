@@ -1,0 +1,8 @@
+export const GET_PROJECTS = 'GET_PROJECTS'
+export const INSERT_PROJECT = 'INSERT_PROJECT'
+export const UPDATE_PROJECT = 'UPDATE_PROJECT'
+export const REMOVE_PROJECT = 'REMOVE_PROJECT'
+
+export const GET_TASKS = 'GET_TASKS'
+export const INSERT_TASK = 'INSERT_TASK'
+export const UPDATE_TASK = 'UPDATE_TASK'
